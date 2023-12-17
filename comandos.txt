@@ -1,0 +1,89 @@
+cluster = new ShardingTest ({shards: 3, chunksize:1})
+
+ db = (new Mongo("localhost:20006")).getDB("torneoFutbolDB")
+
+
+for (i= 0; i < 1000; i++) {
+db.equipo.insert({equipo : "equipo" +i, Nombres : "Recuento de equipos " +i, date: new Date() });
+}
+
+
+for (i= 0; i < 1000; i++) {
+db.jugadores.insert({jugador : "jugador" +i, Nombres : "Recuento de jugadores " +i, date: new Date() });
+}
+
+for (i= 0; i < 1000; i++) {
+db.estadios.insert({estadio : "estadio" +i, Nombres : "Recuento de estadios" +i, date: new Date() });
+}
+
+
+
+sh.enableSharding("torneoFutbolDB")
+
+db.equipo.createIndex({ "equipo": 1 })
+db.jugadores.createIndex({ "jugador": 1 })
+db.estadios.createIndex({ "estadio": 1 })
+
+
+
+sh.shardCollection("torneoFutbolDB.equipo", { "equipo": 1 })
+sh.shardCollection("torneoFutbolDB.jugador", { "jugador": 1 })
+sh.shardCollection("torneoFutbolDB.estadio", { "estadio": 1 })
+
+
+db.equipo.getIndexes()
+db.jugadores.getIndexes()
+db.estadios.getIndexes()
+
+db.equipo.getShardDistribution()
+db.jugadores.getShardDistribution()
+db.estadios.getShardDistribution()
+
+
+db.stats()
+
+
+
+sh.getBalancerState()
+
+sh.setBalancerState(true)
+
+
+
+*/////frozar
+
+
+sh.splitAt("torneoFutbolDB.equipo", {equipo: "equipo5000" })
+sh.splitAt("torneoFutbolDB.jugadores", {jugador: "jugador5000" })
+sh.splitAt("torneoFutbolDB.estadios", {estadio: "estadio5000" })
+
+
+sh.moveChunk("torneoFutbolDB.equipo", {equipo: "equipo11000"}, "rs1")
+sh.moveChunk("torneoFutbolDB.jugadores", {equipo: "equipo11000"}, "rs1")
+sh.moveChunk("torneoFutbolDB.estadios", {equipo: "equipo11000"}, "rs1")
+
+
+shard2= new Mongo("localhost:20001")
+shard2DB = shard2.getDB("torneoFutbolDB")
+show dbs
+use torneoFutbolDB
+shard2DB.equipo.count()
+shard2DB.jugadores.count()
+shard2DB.estadios.count()
+torneoFutbolDB.torneoFutbolDB
+shard2DB.rs.status()
+
+
+shard3= new Mongo("localhost:20002")
+shard3DB = shard3.getDB("torneoFutbolDB")
+show dbs
+use torneoFutbolDB
+shard3DB.equipo.count()
+shard3DB.jugadores.count()
+shard3DB.estadios.count()
+torneoFutbolDB.torneoFutbolDB
+shard2DB.rs.status()
+
+
+shard1DB = shard1.getDB("torneoFutbolDB")
+shard1DB.equipo.count()
