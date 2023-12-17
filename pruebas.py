@@ -23,7 +23,6 @@ insertar_datos_en_coleccion("estadios", 1000000)
 
 
 
-
 def medir_tiempo_de_consulta(coleccion, filtro):
     inicio = time.time()
     documentos = list(db[coleccion].find(filtro))

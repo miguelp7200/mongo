@@ -85,5 +85,6 @@ torneoFutbolDB.torneoFutbolDB
 shard2DB.rs.status()
 
 
+
 shard1DB = shard1.getDB("torneoFutbolDB")
 shard1DB.equipo.count()
